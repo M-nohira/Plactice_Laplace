@@ -8,48 +8,56 @@ namespace Laplace_WPF.Model
 {
     static class Laplace
     {
-        public static double[,] Subsititution(Data.Condition condition, int dpi, int iterate, double[,] grid = null)
+        public static double[,] Subsititution(Data.Condition condition, int dpi, ref int iterate, double[,] grid = null, double conv = 0)
         {
             if (grid == null)
                 grid = new double[condition.X_LMax * dpi, condition.Y_LMax * dpi];
 
             double[,] temp = new double[condition.X_LMax * dpi, condition.Y_LMax * dpi];
-
-            Parallel.For(0, iterate, i =>
+            int cnt = 0;
+            Parallel.For(0, iterate, (i, LoopState) =>
             {
+                double max = 0;
                 for (int x = 1; x + 1 < condition.X_LMax * dpi; x++)
                 {
                     for (int y = 1; y + 1 < condition.Y_LMax * dpi; y++)
                     {
                         if (x >= condition.X_Pos * dpi && y >= condition.Y_Pos * dpi)
-                            if (x <= (condition.X_Pos + condition.X_LRec) * dpi && y <= (condition.Y_Pos + condition.y_LRec) * dpi)
+                            if (x <= (condition.X_LMax - condition.X_Pos) * dpi && y <= (condition.Y_LMax - condition.Y_Pos) * dpi)
                             {
                                 grid[x, y] = 1;
                                 continue;
                             }
-
-                        temp[x,y] = 0.25 * (grid[x + 1, y] + grid[x - 1, y] + grid[x, y + 1] + grid[x, y - 1]);
-
+                        double data = grid[x, y];
+                        temp[x, y] = 0.25 * (grid[x + 1, y] + grid[x - 1, y] + grid[x, y + 1] + grid[x, y - 1]);
+                        max = Math.Abs(data - temp[x, y]) > max ? Math.Abs(data - temp[x, y]) : max;
                     }
                 }
                 grid = temp;
-                
-            });
 
+                if (conv != 0)
+                    if (max < conv)
+
+                        LoopState.Stop();
+                cnt = i;
+            });
+            iterate = cnt + 1;
             return grid;
         }
 
-        public static double[,] Gauss(Data.Condition condition,int dpi,int iterate, double[,] grid = null)
+        public static double[,] Gauss(Data.Condition condition, int dpi, ref int iterate, double[,] grid = null, double conv = 0)
         {
             if (grid == null) grid = new double[condition.X_LMax * dpi, condition.Y_LMax * dpi];
             double[,] temp = new double[condition.X_LMax * dpi, condition.Y_LMax * dpi];
 
-            Parallel.For(0, iterate, i =>
+            int cnt = 0;
+            Parallel.For(0, iterate, (i, loopState) =>
               {
                   double[,] gridOld = grid;
-                  for(int x = 1; x + 1 < condition.X_LMax * dpi; x++)
+                  double max = 0;
+                  for (int x = 1; x + 1 < condition.X_LMax * dpi; x++)
                   {
-                      for(int y = 1;y + 1 < condition.Y_LMax * dpi; y++)
+                      for (int y = 1; y + 1 < condition.Y_LMax * dpi; y++)
                       {
                           if (x >= condition.X_Pos * dpi && y >= condition.Y_Pos * dpi)
                               if (x <= (condition.X_Pos + condition.X_LRec) * dpi && y <= (condition.Y_Pos + condition.y_LRec) * dpi)
@@ -58,15 +66,20 @@ namespace Laplace_WPF.Model
                                   temp[x, y] = 1;
                                   continue;
                               }
-                          
-                          grid[x,y] = 0.25 * (temp[x + 1, y] + grid[x - 1, y] + temp[x, y + 1] + grid[x, y - 1]);
-
+                          double data = grid[x, y];
+                          grid[x, y] = 0.25 * (temp[x + 1, y] + grid[x - 1, y] + temp[x, y + 1] + grid[x, y - 1]);
+                          max = Math.Abs(data - grid[x, y]) > max ? Math.Abs(data - grid[x, y]) : max;
                       }
                   }
                   temp = gridOld;
-                  
-              });
 
+                  if (conv != 0)
+                      if (conv > max)
+
+                          loopState.Stop();
+                  cnt = i;
+              });
+            iterate = cnt + 1;
             return grid;
         }
     }

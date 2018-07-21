@@ -75,12 +75,29 @@ namespace Laplace_WPF.ViewModels
             set { SetProperty(ref _constRapid, value); }
         }
 
+        private string iterateCnt = "0";
+        public string IterateCnt
+        {
+            get { return iterateCnt; }
+            set { SetProperty(ref iterateCnt, value); }
+        }
+
+        private string conv = "0";
+        public string Conv
+        {
+            get { return conv; }
+            set { SetProperty(ref conv, value); }
+        }
+
         private ICommand _culc;
+        private bool culcFlag;
         public ICommand Culc
         {
             get
             {
                 if (_culc != null) return _culc;
+                if (culcFlag == true) return _culc;
+                culcFlag = true;
                 _culc = new DelegateCommand(async () =>
                 {
                     int dpi;
@@ -89,7 +106,8 @@ namespace Laplace_WPF.ViewModels
                     if (!int.TryParse(Iterate, out iterate)) return;
                     int crapid;
                     if (!int.TryParse(ConstRapid, out crapid)) return;
-
+                    double conv;
+                    if (!double.TryParse(Conv, out conv)) return;
 
                     int num;
                     if (!int.TryParse(TextBox1.Substring(2, 2), out num)) return;
@@ -101,7 +119,11 @@ namespace Laplace_WPF.ViewModels
 
                     await Task.Run(() =>
                     {
-                        var data = (CheckedSub == true) ? Model.Laplace.Subsititution(con, dpi, iterate) : (CheckedGauss == true) ? Model.Laplace.Gauss(con, dpi, iterate) : null;
+                        double[,] data = null;
+
+
+                        data = (CheckedSub == true) ? Model.Laplace.Subsititution(con, dpi, ref iterate, null, conv) : (CheckedGauss == true) ? Model.Laplace.Gauss(con, dpi, ref iterate, null, conv) : null;
+                        //data = (CheckedSub == true) ? Model.Laplace.Subsititution(con, dpi, iterate / 10 , data,conv) : (CheckedGauss == true) ? Model.Laplace.Gauss(con, dpi, iterate / 10, data,conv) : null;
                         Bitmap bitmap = Model.Images.CreateImage(con, dpi, data);
 
 
@@ -111,9 +133,12 @@ namespace Laplace_WPF.ViewModels
                             st.Seek(0, SeekOrigin.Begin);
                             Image = BitmapFrame.Create(st, BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
                         }
+
+                        IterateCnt = iterate.ToString();
                     });
 
                 });
+                culcFlag = false;
                 return _culc;
             }
         }
