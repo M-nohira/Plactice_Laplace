@@ -6,7 +6,7 @@
         Title="{Binding Title}" Height="559.795" Width="697.953">
     <Grid>
 
-        <Button Content="Culc" HorizontalAlignment="Left" Margin="55,38,0,0" VerticalAlignment="Top" Width="75" Command="{Binding Culc}"/>
+        <Button Content="Culc" HorizontalAlignment="Left" Margin="60,38,0,0" VerticalAlignment="Top" Width="70" Command="{Binding Culc}"/>
         <TextBox HorizontalAlignment="Left" Height="23" Margin="10,10,0,0" TextWrapping="Wrap" Text="{Binding TextBox1}" VerticalAlignment="Top" Width="120"/>
         <Image Margin="135,10,82,9" Source="{Binding Image}" Height="500" Width="500" Stretch="Fill"/>
         <RadioButton Content="逐次代入法" HorizontalAlignment="Left" Margin="10,63,0,0" VerticalAlignment="Top" IsChecked="{Binding CheckedSub}"/>
@@ -15,13 +15,16 @@
         <Label Content="細かさ[DPI]" HorizontalAlignment="Left" Margin="10,103,0,0" VerticalAlignment="Top" Width="72"/>
         <Label Content="繰り返し回数" HorizontalAlignment="Left" Margin="10,157,0,0" VerticalAlignment="Top" Width="79"/>
         <TextBox HorizontalAlignment="Left" Height="23" Margin="10,183,0,0" TextWrapping="Wrap" Text="{Binding Iterate}" VerticalAlignment="Top" Width="120"/>
-        <CheckBox Content="加速を行う" HorizontalAlignment="Left" Margin="11,211,0,0" VerticalAlignment="Top" IsChecked="{Binding CheckedRapid}"/>
+        <CheckBox Content="加速を行わない" HorizontalAlignment="Left" Margin="11,211,0,0" VerticalAlignment="Top" IsChecked="{Binding CheckedRapid}"/>
         <TextBox HorizontalAlignment="Left" Height="23" Margin="11,257,0,0" TextWrapping="Wrap" Text="{Binding ConstRapid}" VerticalAlignment="Top" Width="119" IsReadOnly="{Binding CheckedRapid}"/>
         <Label Content="加速係数" HorizontalAlignment="Left" Margin="11,231,0,0" VerticalAlignment="Top" Width="65"/>
-        <TextBlock HorizontalAlignment="Left" Margin="10,452,0,0" TextWrapping="Wrap" Text="{Binding IterateCnt}" VerticalAlignment="Top" Width="102"/>
-        <Label Content="収束回数" HorizontalAlignment="Left" Margin="11,421,0,0" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="15,447,0,0" TextWrapping="Wrap" Text="{Binding IterateCnt}" VerticalAlignment="Top" Width="120" Height="21"/>
+        <Label Content="収束回数" HorizontalAlignment="Left" Margin="15,421,0,0" VerticalAlignment="Top"/>
         <Label Content="収束基準" HorizontalAlignment="Left" Margin="10,285,0,0" VerticalAlignment="Top"/>
         <TextBox HorizontalAlignment="Left" Height="23" Margin="10,311,0,0" TextWrapping="Wrap" Text="{Binding Conv}" VerticalAlignment="Top" Width="120"/>
+        <Label Content="計算時間" HorizontalAlignment="Left" Margin="15,477,0,0" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="15,503,0,0" TextWrapping="Wrap" Text="{Binding CulcTime}" VerticalAlignment="Top" Width="120"/>
+        <Button Content="Save" HorizontalAlignment="Left" Margin="10,38,0,0" VerticalAlignment="Top" Width="45" Command="{Binding Save}"/>
 
     </Grid>
 </Window>

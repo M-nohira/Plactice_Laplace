@@ -8,7 +8,7 @@ namespace Laplace_WPF.Model
 {
     static class Laplace
     {
-        public static double[,] Subsititution(Data.Condition condition, int dpi, ref int iterate, double[,] grid = null, double conv = 0)
+        public static double[,] Subsititution(Data.Condition condition, int dpi, ref int iterate, double omega = 0, double[,] grid = null, double conv = 0)
         {
             if (grid == null)
                 grid = new double[condition.X_LMax * dpi, condition.Y_LMax * dpi];
@@ -29,7 +29,13 @@ namespace Laplace_WPF.Model
                                 continue;
                             }
                         double data = grid[x, y];
-                        temp[x, y] = 0.25 * (grid[x + 1, y] + grid[x - 1, y] + grid[x, y + 1] + grid[x, y - 1]);
+                        if (omega == 0)
+                        {
+                            temp[x, y] = 0.25 * (grid[x + 1, y] + grid[x - 1, y] + grid[x, y + 1] + grid[x, y - 1]);
+                            max = Math.Abs(data - temp[x, y]) > max ? Math.Abs(data - temp[x, y]) : max;
+                            continue;
+                        }
+                        temp[x, y] = grid[x, y] + omega * (0.25 * (grid[x + 1, y] + grid[x - 1, y] + grid[x, y + 1] + grid[x, y - 1]) - temp[x, y]);
                         max = Math.Abs(data - temp[x, y]) > max ? Math.Abs(data - temp[x, y]) : max;
                     }
                 }
@@ -45,7 +51,7 @@ namespace Laplace_WPF.Model
             return grid;
         }
 
-        public static double[,] Gauss(Data.Condition condition, int dpi, ref int iterate, double[,] grid = null, double conv = 0)
+        public static double[,] Gauss(Data.Condition condition, int dpi, ref int iterate, double omega = 0, double[,] grid = null, double conv = 0)
         {
             if (grid == null) grid = new double[condition.X_LMax * dpi, condition.Y_LMax * dpi];
             double[,] temp = new double[condition.X_LMax * dpi, condition.Y_LMax * dpi];
@@ -67,7 +73,15 @@ namespace Laplace_WPF.Model
                                   continue;
                               }
                           double data = grid[x, y];
-                          grid[x, y] = 0.25 * (temp[x + 1, y] + grid[x - 1, y] + temp[x, y + 1] + grid[x, y - 1]);
+                          if (omega == 0)
+                          {
+
+                              grid[x, y] = 0.25 * (temp[x + 1, y] + grid[x - 1, y] + temp[x, y + 1] + grid[x, y - 1]);
+                              max = Math.Abs(data - grid[x, y]) > max ? Math.Abs(data - grid[x, y]) : max;
+                              continue;
+                          }
+
+                          grid[x, y] = temp[x, y] + omega * (0.25 * (temp[x + 1, y] + grid[x - 1, y] + temp[x, y + 1] + grid[x, y - 1]) - temp[x, y]);
                           max = Math.Abs(data - grid[x, y]) > max ? Math.Abs(data - grid[x, y]) : max;
                       }
                   }

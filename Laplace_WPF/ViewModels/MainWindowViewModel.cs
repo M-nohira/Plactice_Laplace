@@ -12,7 +12,7 @@ namespace Laplace_WPF.ViewModels
 {
     public class MainWindowViewModel : BindableBase
     {
-        private string _title = "Prism Application";
+        private string _title = "Laplace Culcurater";
         public string Title
         {
             get { return _title; }
@@ -61,7 +61,7 @@ namespace Laplace_WPF.ViewModels
             set { SetProperty(ref _checkedGauss, value); }
         }
 
-        private bool _checkedRapid = false;
+        private bool _checkedRapid = true;
         public bool CheckedRapid
         {
             get { return _checkedRapid; }
@@ -89,6 +89,16 @@ namespace Laplace_WPF.ViewModels
             set { SetProperty(ref conv, value); }
         }
 
+        private string culctime;
+        public string CulcTime
+        {
+            get { return culctime; }
+            set { SetProperty(ref culctime, value + "ms"); }
+        }
+
+        public Bitmap _Bitmap { get; set; }
+
+
         private ICommand _culc;
         private bool culcFlag;
         public ICommand Culc
@@ -104,8 +114,9 @@ namespace Laplace_WPF.ViewModels
                     if (!int.TryParse(DPI, out dpi)) return;
                     int iterate;
                     if (!int.TryParse(Iterate, out iterate)) return;
-                    int crapid;
-                    if (!int.TryParse(ConstRapid, out crapid)) return;
+                    double crapid;
+                    if (!double.TryParse(ConstRapid, out crapid)) return;
+                    if (CheckedRapid == true) crapid = 0;
                     double conv;
                     if (!double.TryParse(Conv, out conv)) return;
 
@@ -121,17 +132,22 @@ namespace Laplace_WPF.ViewModels
                     {
                         double[,] data = null;
 
-
-                        data = (CheckedSub == true) ? Model.Laplace.Subsititution(con, dpi, ref iterate, null, conv) : (CheckedGauss == true) ? Model.Laplace.Gauss(con, dpi, ref iterate, null, conv) : null;
+                        var sw = new System.Diagnostics.Stopwatch();
+                        sw.Start();
+                        data = (CheckedSub == true) ? Model.Laplace.Subsititution(con, dpi, ref iterate, crapid, null, conv) : (CheckedGauss == true) ? Model.Laplace.Gauss(con, dpi, ref iterate, crapid, null, conv) : null;
                         //data = (CheckedSub == true) ? Model.Laplace.Subsititution(con, dpi, iterate / 10 , data,conv) : (CheckedGauss == true) ? Model.Laplace.Gauss(con, dpi, iterate / 10, data,conv) : null;
+                        sw.Stop();
+                        CulcTime = sw.ElapsedMilliseconds.ToString();
                         Bitmap bitmap = Model.Images.CreateImage(con, dpi, data);
-
+                        _Bitmap = (Bitmap)bitmap.Clone();
 
                         using (Stream st = new MemoryStream())
                         {
                             bitmap.Save(st, ImageFormat.Png);
                             st.Seek(0, SeekOrigin.Begin);
                             Image = BitmapFrame.Create(st, BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
+
+
                         }
 
                         IterateCnt = iterate.ToString();
@@ -140,6 +156,20 @@ namespace Laplace_WPF.ViewModels
                 });
                 culcFlag = false;
                 return _culc;
+            }
+        }
+
+        private ICommand save;
+        public ICommand Save
+        {
+            get
+            {
+                if (save != null) return save;
+                save = new DelegateCommand(() =>
+                 {
+                     _Bitmap.Save("Laplace.png");
+                 });
+                return save;
             }
         }
 

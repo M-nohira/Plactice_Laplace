@@ -16,12 +16,18 @@ namespace Laplace_WPF.Model
         public static Bitmap CreateImage(Data.Condition con, int dpi, double[,] data)
         {
             Bitmap image = new Bitmap(con.X_LMax * dpi, con.Y_LMax * dpi);
-            
-                for (int x = 0; x < con.X_LMax * dpi; x++)
+
+            for (int x = 0; x < con.X_LMax * dpi; x++)
             {
                 for (int y = 0; y < con.Y_LMax * dpi; y++)
                 {
                     var color = Color.FromArgb(GetColor(data[x, y]));
+                    if (x >= con.X_Pos * dpi && y >= con.Y_Pos * dpi)
+                        if (x <= (con.X_Pos + con.X_LRec) * dpi && y <= (con.Y_Pos + con.y_LRec) * dpi)
+                        {
+                            color = Color.White;
+                        }
+                    
                     image.SetPixel(x, y, color);
                 }
 
