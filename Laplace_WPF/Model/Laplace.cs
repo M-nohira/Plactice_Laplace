@@ -35,7 +35,7 @@ namespace Laplace_WPF.Model
                             max = Math.Abs(data - temp[x, y]) > max ? Math.Abs(data - temp[x, y]) : max;
                             continue;
                         }
-                        temp[x, y] = grid[x, y] + omega * (0.25 * (grid[x + 1, y] + grid[x - 1, y] + grid[x, y + 1] + grid[x, y - 1]) - temp[x, y]);
+                        temp[x, y] = grid[x, y] + omega * (0.25 * (grid[x + 1, y] + grid[x - 1, y] + grid[x, y + 1] + grid[x, y - 1]) - grid[x, y]);
                         max = Math.Abs(data - temp[x, y]) > max ? Math.Abs(data - temp[x, y]) : max;
                     }
                 }
@@ -45,7 +45,12 @@ namespace Laplace_WPF.Model
                     if (max < conv)
 
                         LoopState.Stop();
-                cnt = i;
+                //cnt = i;
+                lock ((object)cnt)
+                {
+                    cnt++;
+                }
+
             });
             iterate = cnt + 1;
             return grid;
@@ -91,7 +96,12 @@ namespace Laplace_WPF.Model
                       if (conv > max)
 
                           loopState.Stop();
-                  cnt = i;
+                  //cnt++;
+                  lock ((object)cnt)
+                  {
+                      cnt++;
+                  }
+
               });
             iterate = cnt + 1;
             return grid;
