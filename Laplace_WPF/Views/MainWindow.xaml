@@ -8,7 +8,7 @@
 
         <Button Content="Culc" HorizontalAlignment="Left" Margin="60,38,0,0" VerticalAlignment="Top" Width="70" Command="{Binding Culc}"/>
         <TextBox HorizontalAlignment="Left" Height="23" Margin="10,10,0,0" TextWrapping="Wrap" Text="{Binding TextBox1}" VerticalAlignment="Top" Width="120"/>
-        <Image Margin="135,10,82,9" Source="{Binding Image}" Height="500" Width="500" Stretch="Fill"/>
+        <Image Margin="135,15,10,14" Source="{Binding Image}" Height="500" Stretch="Uniform"/>
         <RadioButton Content="逐次代入法" HorizontalAlignment="Left" Margin="10,63,0,0" VerticalAlignment="Top" IsChecked="{Binding CheckedSub}"/>
         <RadioButton Content="ガウス・ザイデル法" HorizontalAlignment="Left" Margin="10,83,0,0" VerticalAlignment="Top" IsChecked="{Binding CheckedGauss}"/>
         <TextBox HorizontalAlignment="Left" Height="23" Margin="10,129,0,0" TextWrapping="Wrap" Text="{Binding DPI}" VerticalAlignment="Top" Width="120"/>

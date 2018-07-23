@@ -52,7 +52,7 @@ namespace Laplace_WPF.Model
                 }
 
             });
-            iterate = cnt + 1;
+            iterate = cnt;
             return grid;
         }
 
@@ -103,7 +103,7 @@ namespace Laplace_WPF.Model
                   }
 
               });
-            iterate = cnt + 1;
+            iterate = cnt;
             return grid;
         }
     }

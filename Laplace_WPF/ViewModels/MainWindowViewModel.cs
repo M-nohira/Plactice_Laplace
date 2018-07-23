@@ -93,7 +93,15 @@ namespace Laplace_WPF.ViewModels
         public string CulcTime
         {
             get { return culctime; }
-            set { SetProperty(ref culctime, value + "ms"); }
+            set
+            {
+
+                int time = 0;
+                if (!int.TryParse(value, out time)) SetProperty(ref culctime, value + "ms");
+                var span = TimeSpan.FromMilliseconds((double)time);
+                string msg = $"{span.Hours} H {span.Minutes}{span.Seconds} S {span.Milliseconds} mS";
+                SetProperty(ref culctime, msg);
+            }
         }
 
         public Bitmap _Bitmap { get; set; }
@@ -125,8 +133,8 @@ namespace Laplace_WPF.ViewModels
                     var con = new Data.Condition();
                     con.X_LMax = 50;
                     con.Y_LMax = 50;
-                    con.X_LRec = 14 + (num / 10);
-                    con.y_LRec = 4 + (num % 10);
+                    con.X_LRec = 14 + 2 * (num / 10);
+                    con.y_LRec = 4 + 4 * (num % 10);
 
                     await Task.Run(() =>
                     {
@@ -138,13 +146,17 @@ namespace Laplace_WPF.ViewModels
                         //data = (CheckedSub == true) ? Model.Laplace.Subsititution(con, dpi, iterate / 10 , data,conv) : (CheckedGauss == true) ? Model.Laplace.Gauss(con, dpi, iterate / 10, data,conv) : null;
                         sw.Stop();
                         CulcTime = sw.ElapsedMilliseconds.ToString();
-                        Bitmap bitmap = Model.Images.CreateImage(con, dpi, data);
-                        _Bitmap = (Bitmap)bitmap.Clone();
 
+                        if (_Bitmap != null)
+                            _Bitmap.Dispose();
+
+
+                        using (Bitmap bitmap = Model.Images.CreateImage(con, dpi, data))
                         using (Stream st = new MemoryStream())
                         {
                             bitmap.Save(st, ImageFormat.Png);
                             st.Seek(0, SeekOrigin.Begin);
+
                             Image = BitmapFrame.Create(st, BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
 
 
