@@ -6,7 +6,7 @@
         Title="{Binding Title}" Height="559.795" Width="697.953">
     <Grid>
 
-        <Button Content="Culc" HorizontalAlignment="Left" Margin="60,38,0,0" VerticalAlignment="Top" Width="70" Command="{Binding Culc}"/>
+        <Button Content="Culc" HorizontalAlignment="Left" Margin="85,38,0,0" VerticalAlignment="Top" Width="45" Command="{Binding Culc}"/>
         <TextBox HorizontalAlignment="Left" Height="23" Margin="10,10,0,0" TextWrapping="Wrap" Text="{Binding TextBox1}" VerticalAlignment="Top" Width="120"/>
         <Image Margin="135,15,10,14" Source="{Binding Image}" Height="500" Stretch="Uniform"/>
         <RadioButton Content="逐次代入法" HorizontalAlignment="Left" Margin="10,63,0,0" VerticalAlignment="Top" IsChecked="{Binding CheckedSub}"/>
@@ -24,7 +24,8 @@
         <TextBox HorizontalAlignment="Left" Height="23" Margin="10,311,0,0" TextWrapping="Wrap" Text="{Binding Conv}" VerticalAlignment="Top" Width="120"/>
         <Label Content="計算時間" HorizontalAlignment="Left" Margin="15,477,0,0" VerticalAlignment="Top"/>
         <TextBlock HorizontalAlignment="Left" Margin="15,503,0,0" TextWrapping="Wrap" Text="{Binding CulcTime}" VerticalAlignment="Top" Width="120"/>
-        <Button Content="Save" HorizontalAlignment="Left" Margin="10,38,0,0" VerticalAlignment="Top" Width="45" Command="{Binding Save}"/>
+        <Button Content="Save Image" HorizontalAlignment="Left" Margin="50,396,0,0" VerticalAlignment="Top" Width="80" Command="{Binding Save}"/>
+        <Button Content="Save Errors" HorizontalAlignment="Left" Margin="50,371,0,0" VerticalAlignment="Top" Width="80" Command="{Binding SaveError}"/>
 
     </Grid>
 </Window>

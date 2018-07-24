@@ -8,13 +8,16 @@ namespace Laplace_WPF.Model
 {
     static class Laplace
     {
-        public static double[,] Subsititution(Data.Condition condition, int dpi, ref int iterate, double omega = 0, double[,] grid = null, double conv = 0)
+        public static Data.Result Subsititution(Data.Condition condition, int dpi, ref int iterate, double omega = 0, double[,] grid = null, double conv = 0)
         {
             if (grid == null)
                 grid = new double[condition.X_LMax * dpi, condition.Y_LMax * dpi];
 
             double[,] temp = new double[condition.X_LMax * dpi, condition.Y_LMax * dpi];
             int cnt = 0;
+
+            var errors = new List<double>();
+
             Parallel.For(0, iterate, (i, LoopState) =>
             {
                 double max = 0;
@@ -37,8 +40,11 @@ namespace Laplace_WPF.Model
                         }
                         temp[x, y] = grid[x, y] + omega * (0.25 * (grid[x + 1, y] + grid[x - 1, y] + grid[x, y + 1] + grid[x, y - 1]) - grid[x, y]);
                         max = Math.Abs(data - temp[x, y]) > max ? Math.Abs(data - temp[x, y]) : max;
+                        errors.Add(max);
                     }
                 }
+
+
                 grid = temp;
 
                 if (conv != 0)
@@ -46,20 +52,24 @@ namespace Laplace_WPF.Model
 
                         LoopState.Stop();
                 //cnt = i;
-                lock ((object)cnt)
-                {
-                    cnt++;
-                }
+                lock (errors)
+                    lock ((object)cnt)
+                    {
+                        cnt++;
+                        errors.Add(max);
+                    }
 
             });
             iterate = cnt;
-            return grid;
+            return new Data.Result(grid, errors);
         }
 
-        public static double[,] Gauss(Data.Condition condition, int dpi, ref int iterate, double omega = 0, double[,] grid = null, double conv = 0)
+        public static Data.Result Gauss(Data.Condition condition, int dpi, ref int iterate, double omega = 0, double[,] grid = null, double conv = 0)
         {
             if (grid == null) grid = new double[condition.X_LMax * dpi, condition.Y_LMax * dpi];
             double[,] temp = new double[condition.X_LMax * dpi, condition.Y_LMax * dpi];
+
+            var errors = new List<double>();
 
             int cnt = 0;
             Parallel.For(0, iterate, (i, loopState) =>
@@ -88,8 +98,11 @@ namespace Laplace_WPF.Model
 
                           grid[x, y] = temp[x, y] + omega * (0.25 * (temp[x + 1, y] + grid[x - 1, y] + temp[x, y + 1] + grid[x, y - 1]) - temp[x, y]);
                           max = Math.Abs(data - grid[x, y]) > max ? Math.Abs(data - grid[x, y]) : max;
+                          errors.Add(max);
                       }
                   }
+
+
                   temp = gridOld;
 
                   if (conv != 0)
@@ -97,14 +110,16 @@ namespace Laplace_WPF.Model
 
                           loopState.Stop();
                   //cnt++;
-                  lock ((object)cnt)
-                  {
-                      cnt++;
-                  }
+                  lock (errors)
+                      lock ((object)cnt)
+                      {
+                          cnt++;
+                          errors.Add(max);
+                      }
 
               });
             iterate = cnt;
-            return grid;
+            return new Data.Result(grid, errors);
         }
     }
 }

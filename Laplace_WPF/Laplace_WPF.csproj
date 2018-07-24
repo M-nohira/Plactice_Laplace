@@ -67,6 +67,8 @@
     </Compile>
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Data\Condition.cs" />
+    <Compile Include="Data\Result.cs" />
+    <Compile Include="Model\file.cs" />
     <Compile Include="Model\Images.cs" />
     <Compile Include="Model\Laplace.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />

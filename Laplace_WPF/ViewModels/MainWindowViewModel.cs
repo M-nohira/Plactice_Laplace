@@ -105,6 +105,7 @@ namespace Laplace_WPF.ViewModels
         }
 
         public Bitmap _Bitmap { get; set; }
+        public Data.Result result { get; set; }
 
 
         private ICommand _culc;
@@ -138,20 +139,22 @@ namespace Laplace_WPF.ViewModels
 
                     await Task.Run(() =>
                     {
-                        double[,] data = null;
+                        Data.Result res = new Data.Result();
 
                         var sw = new System.Diagnostics.Stopwatch();
                         sw.Start();
-                        data = (CheckedSub == true) ? Model.Laplace.Subsititution(con, dpi, ref iterate, crapid, null, conv) : (CheckedGauss == true) ? Model.Laplace.Gauss(con, dpi, ref iterate, crapid, null, conv) : null;
+                        res = (CheckedSub == true) ? Model.Laplace.Subsititution(con, dpi, ref iterate, crapid, null, conv) : (CheckedGauss == true) ? Model.Laplace.Gauss(con, dpi, ref iterate, crapid, null, conv) : null;
                         //data = (CheckedSub == true) ? Model.Laplace.Subsititution(con, dpi, iterate / 10 , data,conv) : (CheckedGauss == true) ? Model.Laplace.Gauss(con, dpi, iterate / 10, data,conv) : null;
                         sw.Stop();
                         CulcTime = sw.ElapsedMilliseconds.ToString();
+                        result = res;
+
 
                         if (_Bitmap != null)
                             _Bitmap.Dispose();
 
 
-                        using (Bitmap bitmap = Model.Images.CreateImage(con, dpi, data))
+                        using (Bitmap bitmap = Model.Images.CreateImage(con, dpi, res.Grid))
                         using (Stream st = new MemoryStream())
                         {
                             bitmap.Save(st, ImageFormat.Png);
@@ -170,6 +173,26 @@ namespace Laplace_WPF.ViewModels
                 return _culc;
             }
         }
+
+        private ICommand saveError;
+        public ICommand SaveError
+        {
+            get
+            {
+                if (saveError != null) return SaveError;
+                saveError = new DelegateCommand(() =>
+                {
+                    using (StreamWriter sw = new StreamWriter($@"{Environment.CurrentDirectory}\Errors.csv",false))
+                    {
+                        string msg = Model.file.GetCSV(result.Error);
+                        sw.Write(msg);
+                        sw.Flush();
+                    }
+                });
+                return saveError;
+            }
+        }
+
 
         private ICommand save;
         public ICommand Save
