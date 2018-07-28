@@ -40,7 +40,7 @@ namespace Laplace_WPF.Model
                         }
                         temp[x, y] = grid[x, y] + omega * (0.25 * (grid[x + 1, y] + grid[x - 1, y] + grid[x, y + 1] + grid[x, y - 1]) - grid[x, y]);
                         max = Math.Abs(data - temp[x, y]) > max ? Math.Abs(data - temp[x, y]) : max;
-                        errors.Add(max);
+                        //errors.Add(max);
                     }
                 }
 
@@ -98,7 +98,7 @@ namespace Laplace_WPF.Model
 
                           grid[x, y] = temp[x, y] + omega * (0.25 * (temp[x + 1, y] + grid[x - 1, y] + temp[x, y + 1] + grid[x, y - 1]) - temp[x, y]);
                           max = Math.Abs(data - grid[x, y]) > max ? Math.Abs(data - grid[x, y]) : max;
-                          errors.Add(max);
+                          //errors.Add(max);
                       }
                   }
 

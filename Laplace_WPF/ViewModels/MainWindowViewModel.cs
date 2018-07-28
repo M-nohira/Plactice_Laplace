@@ -157,6 +157,7 @@ namespace Laplace_WPF.ViewModels
                         using (Bitmap bitmap = Model.Images.CreateImage(con, dpi, res.Grid))
                         using (Stream st = new MemoryStream())
                         {
+                            _Bitmap = (Bitmap)bitmap.Clone();
                             bitmap.Save(st, ImageFormat.Png);
                             st.Seek(0, SeekOrigin.Begin);
 
@@ -202,6 +203,7 @@ namespace Laplace_WPF.ViewModels
                 if (save != null) return save;
                 save = new DelegateCommand(() =>
                  {
+                     //if(_Bitmap == null)
                      _Bitmap.Save("Laplace.png");
                  });
                 return save;
