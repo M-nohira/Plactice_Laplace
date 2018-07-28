@@ -108,16 +108,22 @@ namespace Laplace_WPF.ViewModels
 
 
         private ICommand _culc;
-        private bool culcFlag;
+        private bool culcFlag = true;
+        public bool CulcFlag
+        {
+            get { return culcFlag; }
+            set
+            {
+                SetProperty(ref culcFlag, value);
+            }
+        }
         public ICommand Culc
         {
             get
             {
-                if (_culc != null) return _culc;
-                if (culcFlag == true) return _culc;
-                culcFlag = true;
                 _culc = new DelegateCommand(async () =>
                 {
+                    CulcFlag = false;
                     int dpi;
                     if (!int.TryParse(DPI, out dpi)) return;
                     int iterate;
@@ -165,9 +171,9 @@ namespace Laplace_WPF.ViewModels
 
                         IterateCnt = iterate.ToString();
                     });
-
+                    CulcFlag = true;
                 });
-                culcFlag = false;
+
                 return _culc;
             }
         }
